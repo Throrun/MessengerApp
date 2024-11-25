@@ -1,6 +1,8 @@
 package com.throrun.messenger.user;
 
 import com.throrun.messenger.security.AuthenticationService;
+import com.throrun.messenger.user.req_res.SignInReq;
+import com.throrun.messenger.user.req_res.SignInRes;
 import com.throrun.messenger.user.req_res.SignUpReq;
 import com.throrun.messenger.user.req_res.SignUpRes;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,11 @@ public class ProfileController implements ProfileApi {
     @Override
     public SignUpRes createUser(SignUpReq signUpReq) {
         return authenticationService.signUp(signUpReq);
+    }
+
+    @Override
+    public SignInRes login(SignInReq signInReq) {
+        return authenticationService.signIn(signInReq);
     }
 
     @Override

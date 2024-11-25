@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -37,6 +40,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public SignInRes signIn(SignInReq signInReq) {
-        return null;
+        Optional<Profile> OptProfile = profileRepository.findByEmail(signInReq.getEmail());
+        Profile profile = OptProfile.orElseThrow(() -> new RuntimeException("Wrong credentials"));
+        if (passwordEncoder.matches(signInReq.getPassword(),profile.getPassword())){
+            return SignInRes.builder().token(jwtService.generateToken(profile)).build();
+        } else {
+            throw new RuntimeException(("Wrong credentials"));
+        }
     }
 }
