@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class SignInReq {
-    private String email;
+    private String login;
     private String password;
 }

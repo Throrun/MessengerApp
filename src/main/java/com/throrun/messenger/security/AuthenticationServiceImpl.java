@@ -8,6 +8,9 @@ import com.throrun.messenger.user.req_res.SignInRes;
 import com.throrun.messenger.user.req_res.SignUpReq;
 import com.throrun.messenger.user.req_res.SignUpRes;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public final ProfileRepository profileRepository;
     public final PasswordEncoder passwordEncoder;
     public final JwtService jwtService;
+    public final AuthenticationManager authenticationManager;
 
     @Override
     public SignUpRes signUp(SignUpReq request) {
@@ -40,12 +44,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public SignInRes signIn(SignInReq signInReq) {
-        Optional<Profile> OptProfile = profileRepository.findByEmail(signInReq.getEmail());
-        Profile profile = OptProfile.orElseThrow(() -> new RuntimeException("Wrong credentials"));
-        if (passwordEncoder.matches(signInReq.getPassword(),profile.getPassword())){
-            return SignInRes.builder().token(jwtService.generateToken(profile)).build();
-        } else {
-            throw new RuntimeException(("Wrong credentials"));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInReq.getLogin(),signInReq.getPassword()));
+        } catch (Exception e) {
+            throw new RuntimeException("Wrong email or password");
         }
+        Optional<Profile> Optprofile = profileRepository.findByName(signInReq.getLogin());
+        Profile profile = Optprofile.orElseGet(() -> profileRepository.findByEmail(signInReq.getLogin()).orElseThrow());
+        return SignInRes.builder().token(jwtService.generateToken(profile)).build();
+
     }
 }
