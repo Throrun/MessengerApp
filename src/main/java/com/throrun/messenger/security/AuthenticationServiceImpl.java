@@ -47,8 +47,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (Exception e) {
             throw new RuntimeException("Wrong email or password");
         }
-        Optional<Profile> Optprofile = profileRepository.findByName(signInReq.getLogin());
-        Profile profile = Optprofile.orElseGet(() -> profileRepository.findByEmail(signInReq.getLogin()).orElseThrow());
+        Optional<Profile> OptProfile = profileRepository.findByName(signInReq.getLogin());
+        Profile profile = OptProfile.orElseGet(() -> profileRepository.findByEmail(signInReq.getLogin()).orElseThrow());
         return SignInRes.builder().token(jwtService.generateToken(profile)).build();
 
     }
