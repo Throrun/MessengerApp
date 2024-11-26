@@ -2,10 +2,7 @@ package com.throrun.messenger.user;
 
 import com.throrun.messenger.common.type.MessengerResponse;
 import com.throrun.messenger.security.AuthenticationService;
-import com.throrun.messenger.user.req_res.SignInReq;
-import com.throrun.messenger.user.req_res.SignInRes;
-import com.throrun.messenger.user.req_res.SignUpReq;
-import com.throrun.messenger.user.req_res.SignUpRes;
+import com.throrun.messenger.user.req_res.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +15,7 @@ public class ProfileController implements ProfileApi {
 
     public static final String REQUEST_MAPPING = "api/messenger/user";
     private final AuthenticationService authenticationService;
+    private final ProfileService profileService;
 
     @Override
     public ResponseEntity<MessengerResponse<SignUpRes>> createUser(SignUpReq signUpReq) {
@@ -35,6 +33,12 @@ public class ProfileController implements ProfileApi {
                 .body(MessengerResponse.<SignInRes>builder()
                         .message("login successfully!")
                         .data(signInRes).build());
+    }
+
+    @Override
+    public ResponseEntity<MessengerResponse<GetProfilesRes>> getProfiles() {
+        GetProfilesRes getProfilesRes = profileService.getProfiles();
+        return null;
     }
 
     @Override
