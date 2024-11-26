@@ -8,13 +8,11 @@ import com.throrun.messenger.user.req_res.SignInRes;
 import com.throrun.messenger.user.req_res.SignUpReq;
 import com.throrun.messenger.user.req_res.SignUpRes;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -45,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public SignInRes signIn(SignInReq signInReq) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInReq.getLogin(),signInReq.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInReq.getLogin(), signInReq.getPassword()));
         } catch (Exception e) {
             throw new RuntimeException("Wrong email or password");
         }
