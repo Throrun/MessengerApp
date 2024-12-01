@@ -37,8 +37,11 @@ public class ProfileController implements ProfileApi {
 
     @Override
     public ResponseEntity<MessengerResponse<GetProfilesRes>> getProfiles() {
-        GetProfilesRes getProfilesRes = profileService.getProfiles();
-        return null;
+        GetProfilesRes profiles = profileService.getProfiles();
+        return ResponseEntity.status(200)
+                .body(MessengerResponse.<GetProfilesRes>builder()
+                        .message("Profiles retrieve successfully")
+                        .data(profiles).build());
     }
 
     @Override
@@ -46,7 +49,6 @@ public class ProfileController implements ProfileApi {
         return ResponseEntity.status(200)
                 .body(MessengerResponse.<String>builder()
                         .message("Success")
-                        .data("pong")
-                        .build());
+                        .data("pong").build());
     }
 }

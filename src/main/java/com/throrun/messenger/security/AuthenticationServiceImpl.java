@@ -1,5 +1,8 @@
 package com.throrun.messenger.security;
 
+import com.throrun.messenger.exceptions.ProfileAlreadyExistException;
+import com.throrun.messenger.exceptions.ProfileNotFoundException;
+import com.throrun.messenger.exceptions.WrongCredentialsException;
 import com.throrun.messenger.security.util.JwtService;
 import com.throrun.messenger.user.data.model.Profile;
 import com.throrun.messenger.user.data.repsitory.ProfileRepository;
@@ -27,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public SignUpRes signUp(SignUpReq request) {
         if (profileRepository.findByNameOrEmail(request.getName(), request.getEmail()).isPresent()) {
-            throw new RuntimeException("User exist");
+            throw new ProfileAlreadyExistException("Profile already exist");
         }
         Profile profile = Profile.builder()
                 .name(request.getName())
@@ -45,10 +48,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInReq.getLogin(), signInReq.getPassword()));
         } catch (Exception e) {
-            throw new RuntimeException("Wrong email or password");
+            throw new WrongCredentialsException("Wrong email or password");
         }
         Optional<Profile> OptProfile = profileRepository.findByName(signInReq.getLogin());
-        Profile profile = OptProfile.orElseGet(() -> profileRepository.findByEmail(signInReq.getLogin()).orElseThrow());
+        Profile profile = OptProfile.orElseGet(() -> profileRepository.findByEmail(signInReq.getLogin()).orElseThrow(() -> new ProfileNotFoundException("Profile not found")));
         return SignInRes.builder().token(jwtService.generateToken(profile)).build();
 
     }
